@@ -40,8 +40,8 @@ Displays an image. Image data can be set by either specifying the "src" attribut
 * **src**: URL to remote image. Can be on any publicly available server.
 * **data**: ArrayBuffer or Blob representing image data.
 * **crop**: String for detection method.
- * Detected attributes in the image will be centered within the
-   constraints set of width/height. If width/height are not set
-   the image is cropped around the detected elements.
+  * Detected attributes in the image will be centered within the
+    constraints set of width/height. If width/height are not set
+    the image is cropped around the detected elements.
 * **width**: Image element width.
 * **height**: Image element height.

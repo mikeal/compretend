@@ -26,7 +26,8 @@
     "multihasher": "^1.0.0",
     "opencv": "git+https://github.com/peterbraden/node-opencv.git#52333d4",
     "tap": "^10.7.2",
-    "zcomponent": "^1.0.1"
+    "zcomponent": "^1.0.1",
+    "zombie": "^5.0.7"
   },
   "devDependencies": {
     "budo": "^10.0.4",

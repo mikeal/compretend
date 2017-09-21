@@ -1,4 +1,5 @@
 /* globals Image, Blob, Compretend */
+require('./load-global')
 const ZComponent = require('../roll-call/components/z-component')
 const hasher = require('multihasher')
 const qs = require('query-string')
@@ -88,6 +89,8 @@ class CompretendImage extends ZComponent {
     `
   }
 }
+
+Compretend.image = (...args) => new CompretendImage(...args)
 
 module.exports = CompretendImage
 

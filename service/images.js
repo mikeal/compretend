@@ -1,3 +1,4 @@
+const httpGet = require('./get')
 const hasher = require('multihasher')('sha256')
 
 class Image {
@@ -63,7 +64,16 @@ class Images {
     return img
   }
   async fromURL (url) {
-    // TODO
+    let urlHash = await hasher(url)
+    let blockHash = await this.store.get(urlHash + '.url')
+    if (blockHash) return this.fromHash(blockHash)
+    else {
+      let buffer = Buffer.from(await httpGet(url))
+      blockHash = await hasher(buffer)
+      await this.store.set(blockHash, buffer)
+      await this.store.set(urlHash + '.url', blockHash)
+      return this.fromBuffer(buffer)
+    }
   }
   async fromHash (hash) {
     let img = new Image(this.store)
