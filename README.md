@@ -1,5 +1,7 @@
 # Compretend
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/mikeal/compretend.svg?token=79fcbe04c043b2363fcfd80ab8272a9ea060d8c2c7dbf185d05aed54a44ba5d0&ts=1506032457372)](https://greenkeeper.io/)
+
 Web application building blocks power by ML.
 
 This repo contains:
