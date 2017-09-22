@@ -32,9 +32,12 @@ const bounds = detections => {
   return _bounds
 }
 
+const flatten = arr => Array.prototype.concat(...arr)
+
 class ImageAPI {
-  constructor (store) {
+  constructor (store, images) {
     this.store = store
+    this.images = images
   }
   set buffer (buff) {
     this._buffer = buff
@@ -82,6 +85,24 @@ class ImageAPI {
     // TODO: scale image and store it.
   }
   async generate (settings) {
+    let numberKeys = [
+      'width',
+      'height',
+      'min-width',
+      'min-height',
+      'max-width',
+      'max-height'
+    ]
+    numberKeys.forEach(key => {
+      settings[key] = parseInt(settings[key])
+    })
+
+    if (settings.scaled === 'true' || settings.scaled === 'false') {
+      settings.scaled = JSON.parse(settings.scaled)
+    } else {
+      settings.scaled = parseInt(settings.scaled)
+    }
+
     let buffer = await this.buffer
     let img
     let detected
@@ -114,34 +135,71 @@ class ImageAPI {
       buffer = canvas.toBuffer()
     }
     if (settings.scaled) {
-      img = new Image()
-      img.src = buffer
-      // TODO: when scaling an image larger use ML to generate higher res
-      if (settings.width) img.width = settings.width
-      if (settings.height) img.height = settings.height
-      let canvas = new Canvas()
-      canvas.width = img.width
-      canvas.height = img.height
-      let ctx = canvas.getContext('2d')
-      ctx.drawImage(img, 0, 0, img.width, img.height)
-      buffer = canvas.toBuffer()
+      if (typeof settings.scaled === 'number') {
+        numberKeys.forEach(key => {
+          if (settings[key]) settings[key] = settings[key] * settings.scaled
+        })
+      }
+      let size = {width: settings.width, height: settings.height}
+      buffer = await this.scaled(size, buffer)
     }
     return buffer
   }
   async detections (api) {
-    let result = await this[api]()
-    let ret = []
-    Object.values(result).forEach(r => {
-      if (Array.isArray(r)) ret = ret.concat(r)
-    })
-    return ret
+    let detected = await this.detect(api)
+    return flatten(Object.values(detected).filter(r => Array.isArray(r)))
   }
+  async scaled (size, buffer) {
+    // TODO: cache lookup
+    let img = new Image()
+    img.src = buffer
 
-  faces () {
-    return detect.faces(this)
+    if (size.width && !size.height) {
+      size.height = (size.width / img.width) * img.height
+    }
+    if (size.height && !size.width) {
+      size.width = (size.height / img.height) * img.width
+    }
+
+    // TODO: when scaling an image larger use ML to generate higher res
+    let canvas = new Canvas()
+    canvas.width = size.width
+    canvas.height = size.height
+    let ctx = canvas.getContext('2d')
+    ctx.drawImage(img, 0, 0, size.width, size.height)
+    buffer = canvas.toBuffer()
+    img = new Image()
+    img.src = buffer
+    return buffer
   }
-  people () {
-    return detect.people(this)
+  async detect (key) {
+    let source = new Image()
+    let sourceBuffer = await this.buffer
+    source.src = sourceBuffer
+
+    // Create scaled image
+    let buffer = await this.scaled({width: 320}, sourceBuffer)
+    let _img = await this.images.fromBuffer(buffer)
+    let detected = await detect[key](_img)
+    let scaled = new Image()
+    scaled.src = buffer
+
+    // Get scalars
+    let widthScalar = source.width / scaled.width
+    let heightScalar = source.height / scaled.height
+
+    // Scale detections
+    flatten(
+      Object.values(detected)
+      .filter(r => Array.isArray(r))
+    ).forEach(obj => {
+      obj.x = obj.x * widthScalar
+      obj.y = obj.y * heightScalar
+      obj.width = obj.width * widthScalar
+      obj.height = obj.height * heightScalar
+    })
+    detected.image = await this.hash
+    return detected
   }
 }
 
@@ -150,7 +208,7 @@ class Images {
     this.store = store
   }
   async fromBuffer (buff) {
-    let img = new ImageAPI(this.store)
+    let img = new ImageAPI(this.store, this)
     img.buffer = buff
     return img
   }
@@ -167,7 +225,7 @@ class Images {
     }
   }
   async fromHash (hash) {
-    let img = new ImageAPI(this.store)
+    let img = new ImageAPI(this.store, this)
     img.hash = hash
     return img
   }

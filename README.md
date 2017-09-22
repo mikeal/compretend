@@ -9,6 +9,13 @@ This repo contains:
 
 ## Usage
 
+Include compretend on your web page.
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/compretend@latest/dist/compretend.min.js"></script>
+```
+Now you can add compretend elements to your page.
+
 ```html
 <compretend-img src="http://site.com/image.png" crop="faces" />
 ```
@@ -45,3 +52,4 @@ Displays an image. Image data can be set by either specifying the "src" attribut
     the image is cropped around the detected elements.
 * **width**: Image element width.
 * **height**: Image element height.
+* **scaled**: Scale image down to the specific dimensions (height and width). Defaults to false.

@@ -6,6 +6,7 @@
   "scripts": {
     "commit": "git-cz",
     "test": "tap test/test-*.js",
+    "demos": "micro service/api.js & budo dist.js:bundle.js -d demos",
     "posttest": "standard",
     "coverage": "tap test/test-*.js --coverage-report=lcov",
     "postcoverage": "codecov",

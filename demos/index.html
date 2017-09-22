@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Compretend Demos</title>
+    <style>
+      body {
+        margin: 0 0 0 0;
+        padding: 10px 10px 10px 10px;
+      }
+
+      compretend-upload place-holder {
+        width: 200px;
+        height: 200px;
+        display: inline-block;
+        background-color: grey;
+      }
+      compretend-upload img {
+        max-width: 200px;
+      }
+
+    </style>
+  </head>
+  <body class="body">
+    <script src="bundle.js"></script>
+    <compretend-demo>
+        <compretend-img
+        src="https://upload.wikimedia.org/wikipedia/commons/e/e4/RZA_Shankbone_2009_Tao_of_Wu.jpg"
+        crop="faces"
+        width=640
+        scaled=true
+      >
+      </compretend-img>
+    </compretend-demo>
+  </body>
+</html>

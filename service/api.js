@@ -16,8 +16,8 @@ const generateImage = (image, req) => {
 const routes = {
   images: {
     detect: {
-      faces: img => img.faces(),
-      people: img => img.people()
+      faces: img => img.detect('faces'),
+      people: img => img.detect('people')
     },
     push: pushImage,
     generate: generateImage

@@ -1,12 +1,12 @@
 /* globals Image, Blob, Compretend */
 require('./load-global')
-const ZComponent = require('zcomponent')
-const hasher = require('multihasher')
+const ZComponent = require('../../zcomponent')
+const hasher = require('multihasher')('sha256')
 const qs = require('query-string')
 
 const sorted = obj => {
   let o = {}
-  Object.keys(obj).sort().forEach(k => o[k])
+  Object.keys(obj).sort().forEach(k => { o[k] = obj[k] })
   return o
 }
 
@@ -43,6 +43,11 @@ class CompretendImage extends ZComponent {
       // this.src = hash
     }
   }
+  set scaled (value) {
+    if (value !== 'false' && value) {
+      this._imageSetting('scaled', value)
+    }
+  }
 
   async _settingsHash () {
     return hasher(JSON.stringify(this._getURLSettings()))
@@ -73,6 +78,7 @@ class CompretendImage extends ZComponent {
       let img = new Image()
       img.onload = () => resolve(img)
       img.src = src
+      if (img.complete) resolve(img)
       if (settings.width) img.width = settings.width
       if (settings.height) img.height = settings.height
     })
@@ -107,3 +113,9 @@ Compretend.image = (...args) => new CompretendImage(...args)
 module.exports = CompretendImage
 
 window.customElements.define('compretend-image', CompretendImage)
+
+/* We need another class because you can only register one class per
+   element name.
+*/
+class CompretendImg extends CompretendImage { }
+window.customElements.define('compretend-img', CompretendImg)
