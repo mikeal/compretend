@@ -11,6 +11,7 @@
     "postcoverage": "codecov",
     "precommit": "npm test",
     "prepush": "npm test",
+    "prepublish": "mkdir -p dist && browserify dist.js > dist/compretend.js && cat dist/compretend.js | minify > dist/compretend.min.js",
     "commitmsg": "validate-commit-msg",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
     "start": "micro service/api.js",
@@ -31,12 +32,14 @@
     "zombie": "^5.0.7"
   },
   "devDependencies": {
+    "babel-minify": "^0.2.0",
     "browserify": "^14.4.0",
     "budo": "^10.0.4",
     "codecov": "^2.2.0",
     "commitizen": "^2.9.6",
     "cz-conventional-changelog": "^2.0.0",
     "husky": "^0.14.3",
+    "load-js": "^2.0.0",
     "now": "^8.3.5",
     "request-promise": "^4.2.1",
     "rimraf": "^2.6.1",
