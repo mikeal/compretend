@@ -4,7 +4,11 @@ const ZComponent = require('../roll-call/components/z-component')
 const hasher = require('multihasher')
 const qs = require('query-string')
 
-const sorted = obj => Object.keys(obj).sort().map(k => obj[k])
+const sorted = obj => {
+  let o = {}
+  Object.keys(obj).sort().forEach(k => o[k])
+  return o
+}
 
 class CompretendImage extends ZComponent {
   constructor () {
@@ -14,7 +18,7 @@ class CompretendImage extends ZComponent {
 
   async settings () {
     let _settings = this._settings
-    let hash = await hasher(sorted(_settings))
+    let hash = await this._settingsHash()
     return {image: _settings, hash}
   }
 
@@ -41,7 +45,7 @@ class CompretendImage extends ZComponent {
   }
 
   async _settingsHash () {
-    return hasher(sorted(this._settings))
+    return hasher(JSON.stringify(this._getURLSettings()))
   }
   async _imageSetting (key, value) {
     let hash = await this._settingsHash()
@@ -73,8 +77,16 @@ class CompretendImage extends ZComponent {
       if (settings.height) img.height = settings.height
     })
   }
+  _getURLSettings () {
+    let _settings = sorted(this._settings)
+    if (!_settings.scaled) {
+      delete _settings.width
+      delete _settings.height
+    }
+    return _settings
+  }
   _makeURL () {
-    let query = qs.stringify(sorted(this._settings))
+    let query = qs.stringify(this._getURLSettings())
     return `${Compretend.api}/images/generate?${query}`
   }
   get shadow () {
