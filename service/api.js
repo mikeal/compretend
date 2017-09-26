@@ -1,6 +1,6 @@
 const url = require('url')
 const qs = require('querystring')
-const {buffer} = require('micro')
+const { buffer } = require('micro')
 
 const pushImage = async image => {
   let hash = await image.save()
@@ -13,6 +13,11 @@ const generateImage = (image, req) => {
   return image.generate(req.query)
 }
 
+const generateBounds = (image, req) => {
+  delete req.query.body
+  return image.bounds(req.query)
+}
+
 const routes = {
   images: {
     detect: {
@@ -20,6 +25,7 @@ const routes = {
       people: img => img.detect('people')
     },
     push: pushImage,
+    bounds: generateBounds,
     generate: generateImage
   }
 }

@@ -4,6 +4,17 @@ const hasher = require('multihasher')('sha256')
 const Canvas = require('canvas')
 const Image = Canvas.Image
 
+const numberKeys = [
+  'width',
+  'height',
+  'min-width',
+  'min-height',
+  'max-width',
+  'max-height',
+  'margin',
+  'padding'
+]
+
 const bounds = detections => {
   let _bounds = {
     x: Infinity,
@@ -84,46 +95,30 @@ class ImageAPI {
     }
     // TODO: scale image and store it.
   }
-  async generate (settings) {
-    let numberKeys = [
-      'width',
-      'height',
-      'min-width',
-      'min-height',
-      'max-width',
-      'max-height'
-    ]
+  _cleanSettings (settings) {
     numberKeys.forEach(key => {
+      if (!settings[key]) return
       settings[key] = parseInt(settings[key])
     })
 
     if (settings.scaled === 'true' || settings.scaled === 'false') {
       settings.scaled = JSON.parse(settings.scaled)
-    } else {
+    } else if (typeof settings.scaled === 'string') {
       settings.scaled = parseInt(settings.scaled)
     }
+    return settings
+  }
+  async generate (settings) {
+    settings = this._cleanSettings(settings)
 
     let buffer = await this.buffer
-    let img
-    let detected
     if (settings.crop) {
       // TODO: caching
-      img = new Image()
+      let img = new Image()
       img.src = buffer
-      detected = await this.detections(settings.crop)
-      let crop
-      if (!detected.length) {
-        crop = {
-          x: 0,
-          y: 0,
-          right: img.height,
-          bottom: img.height,
-          width: img.width,
-          height: img.height
-        }
-      } else {
-        crop = bounds(detected)
-      }
+
+      let { bounds } = await this.bounds(settings)
+      let crop = bounds
       let canvas = new Canvas()
       canvas.width = crop.width
       canvas.height = crop.height
@@ -148,6 +143,63 @@ class ImageAPI {
   async detections (api) {
     let detected = await this.detect(api)
     return flatten(Object.values(detected).filter(r => Array.isArray(r)))
+  }
+  async bounds (settings) {
+    settings = this._cleanSettings(settings)
+
+    let buffer = await this.buffer
+    let img = new Image()
+    img.src = buffer
+    let detected
+    let crop
+    if (settings.crop) {
+      // TODO: caching
+      detected = await this.detections(settings.crop)
+      if (!detected.length) {
+        crop = {
+          x: 0,
+          y: 0,
+          right: img.height,
+          bottom: img.height,
+          width: img.width,
+          height: img.height
+        }
+      } else {
+        crop = bounds(detected)
+      }
+    }
+
+    let scalar
+    if (settings.margin) {
+      if (settings.scaled) {
+        if (settings.width) {
+          scalar = crop.width / settings.width
+        } else if (settings.height) {
+          scalar = crop.height / settings.height
+        }
+      }
+      let margin = scalar * settings.margin
+      crop.x = crop.x - margin
+      if (crop.x < 0) crop.x = 0
+      crop.y = crop.y - margin
+      if (crop.y < 0) crop.y = 0
+      crop.right = crop.right + margin
+      if (crop.right > img.width) crop.right = img.width
+      crop.bottom = crop.bottom + margin
+      if (crop.bottom > img.height) crop.bottom = img.height
+      crop.width = crop.width + (margin * 2)
+      if (crop.width > img.width) crop.width = img.width
+      crop.height = crop.height + (margin * 2)
+      if (crop.height > img.height) crop.height = img.height
+    }
+
+    return {
+      scalar,
+      bounds: crop,
+      width: img.width,
+      height: img.height,
+      image: await this.hash
+    }
   }
   async scaled (size, buffer) {
     // TODO: cache lookup

@@ -12,22 +12,22 @@ const readFile = f => promisify(fs.readFile)(path.join(__dirname, f))
 
 const u = p => `http://localhost:3000${p}`
 
-test('basic faces, PUT & GET', async t => {
-  t.plan(6)
-  await server.listen(3000)
-  let body = await readFile('bowie-burroughs.png')
-  let res = await r2.put(u('/images/detect/faces'), {body}).json
-  t.ok(res.image)
-  t.ok(res.front)
-  t.ok(res.profile)
+// test('basic faces, PUT & GET', async t => {
+//   t.plan(6)
+//   await server.listen(3000)
+//   let body = await readFile('bowie-burroughs.png')
+//   let res = await r2.put(u('/images/detect/faces'), {body}).json
+//   t.ok(res.image)
+//   t.ok(res.front)
+//   t.ok(res.profile)
 
-  let url = u(`/images/detect/faces?body=${res.image}`)
-  let res2 = await r2.get(url).json
-  t.same(res.image, res2.image)
-  t.same(res.front, res2.front)
-  t.same(res.profile, res2.profile)
-  await server.close()
-})
+//   let url = u(`/images/detect/faces?body=${res.image}`)
+//   let res2 = await r2.get(url).json
+//   t.same(res.image, res2.image)
+//   t.same(res.front, res2.front)
+//   t.same(res.profile, res2.profile)
+//   await server.close()
+// })
 
 test('basic people, PUT & GET', async t => {
   t.plan(6)

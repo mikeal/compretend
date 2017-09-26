@@ -1,4 +1,4 @@
-/* globals Image, Blob, Compretend */
+/* globals Image, Blob, Compretend, fetch */
 require('./load-global')
 const ZComponent = require('../../zcomponent')
 const hasher = require('multihasher')('sha256')
@@ -34,6 +34,13 @@ class CompretendImage extends ZComponent {
   set src (value) {
     this._imageSetting('body', value)
   }
+  set margin (value) {
+    this._imageSetting('margin', parseInt(value))
+  }
+  set padding (value) {
+    this._imageSetting('padding', parseInt(value))
+  }
+
   set data (value) {
     if (value instanceof ArrayBuffer) {
       // TODO: push to server and then set to hash
@@ -74,7 +81,7 @@ class CompretendImage extends ZComponent {
   toImage () {
     let settings = Object.assign({}, this._settings)
     let src = this._makeURL()
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       let img = new Image()
       img.onload = () => resolve(img)
       img.src = src
@@ -94,6 +101,33 @@ class CompretendImage extends ZComponent {
   _makeURL () {
     let query = qs.stringify(this._getURLSettings())
     return `${Compretend.api}/images/generate?${query}`
+  }
+  _makeBoundsURL () {
+    let query = qs.stringify(this._getURLSettings())
+    return `${Compretend.api}/images/bounds?${query}`
+  }
+  overlay (selector) {
+    /* Mostly useful for demo purposes */
+    setTimeout(async () => {
+      let boundsURL = this._makeBoundsURL()
+      let _req = fetch(boundsURL).then(res => res.json())
+      let _img = this.toImage()
+      let [bounds, img] = await Promise.all([_req, _img])
+      let under = document.querySelector(selector)
+
+      let widthScalar = under.width / bounds.width
+      let heightScalar = under.height / bounds.height
+
+      img.width = img.width * widthScalar * (bounds.bounds.width / img.width)
+      img.height = img.height * heightScalar * (bounds.bounds.height / img.height)
+      img.style.position = 'absolute'
+      img.style.top = parseInt((bounds.bounds.y * heightScalar) - 5) + 'px'
+      img.style.left = parseInt((bounds.bounds.x * widthScalar) - 5) + 'px'
+      img.style.border = '5px solid #37FDFC'
+      img.style['z-index'] = 10
+      under.parentNode.style.position = 'relative'
+      under.parentNode.appendChild(img)
+    }, 1)
   }
   get shadow () {
     return `

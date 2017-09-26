@@ -18,6 +18,9 @@
     "start": "micro service/api.js",
     "devsocket": "micro service/api.js & budo index.js:bundle.js"
   },
+  "standard": {
+    "ignore": ["dist/"]
+  },
   "keywords": [],
   "author": "Mikeal Rogers <mikeal.rogers@gmail.com> (http://www.mikealrogers.com)",
   "license": "Apache-2.0",
@@ -29,7 +32,7 @@
     "multihasher": "^1.0.0",
     "opencv": "git+https://github.com/peterbraden/node-opencv.git#52333d4",
     "tap": "^10.7.2",
-    "zcomponent": "^1.0.1",
+    "zcomponent": "^1.0.4",
     "zombie": "^5.0.7"
   },
   "devDependencies": {
