@@ -1,4 +1,4 @@
-const r2 = require('../../r2')
+const r2 = require('r2')
 
 const Compretend = {
   api: 'http://localhost:3000'

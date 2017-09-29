@@ -6,7 +6,7 @@
   "scripts": {
     "commit": "git-cz",
     "test": "tap test/test-*.js",
-    "demos": "micro service/api.js & budo dist.js:bundle.js -d demos",
+    "demos": "micro -p ${PORT:-3000} service/api.js & budo dist.js:bundle.js -d demos",
     "posttest": "standard",
     "coverage": "tap test/test-*.js --coverage-report=lcov",
     "postcoverage": "codecov",
@@ -19,7 +19,9 @@
     "devsocket": "micro service/api.js & budo index.js:bundle.js"
   },
   "standard": {
-    "ignore": ["dist/"]
+    "ignore": [
+      "dist/"
+    ]
   },
   "keywords": [],
   "author": "Mikeal Rogers <mikeal.rogers@gmail.com> (http://www.mikealrogers.com)",
@@ -30,7 +32,8 @@
     "drag-drop": "^2.13.2",
     "micro": "^9.0.0",
     "multihasher": "^1.0.0",
-    "opencv": "git+https://github.com/peterbraden/node-opencv.git#52333d4",
+    "opencv": "git+https://github.com/TooTallNate/node-opencv.git#49b9f42",
+    "r2": "^2.0.0",
     "tap": "^10.7.2",
     "zcomponent": "^1.0.4",
     "zombie": "^5.0.7"

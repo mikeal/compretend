@@ -1,6 +1,6 @@
 /* globals Image, Blob, Compretend, fetch */
 require('./load-global')
-const ZComponent = require('../../zcomponent')
+const ZComponent = require('zcomponent')
 const hasher = require('multihasher')('sha256')
 const qs = require('query-string')
 
