@@ -59,19 +59,19 @@ Displays an image. Image data can be set by either specifying the "src" attribut
 
 All APIs require a `body`. This can be an HTTP PUT/POST body **or** it can be a querystring identifier (hash or remote URL).
 
-#### /images/detect/faces
+### /images/detect/faces
 
 Accepts only the `body` argument.
 
 Return JSON of all facial detections.
 
-#### /images/detect/people
+### /images/detect/people
 
 Accepts only the `body` argument.
 
 Return JSON of all people detections.
 
-#### /images/generate
+### /images/generate
 
 Returns generated image data as PNG.
 
@@ -84,7 +84,7 @@ Accepts the following querystring parameters:
 * **scaled**: Scale image down to the specific dimensions (height and width). Defaults to false.
 * **margin**: Ads margin to a cropped and scaled image.
 
-#### /images/bounds
+### /images/bounds
 
 Returns JSON data describing the crop boundaries for the given query.
 
