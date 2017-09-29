@@ -1,5 +1,6 @@
 const httpGet = require('./get')
 const detect = require('./detect')
+const qs = require('querystring')
 const hasher = require('multihasher')('sha256')
 const Canvas = require('canvas')
 const Image = Canvas.Image
@@ -75,7 +76,39 @@ class ImageAPI {
     }
     return this._hash
   }
-
+  async cached (opts) {
+    let key = qs.stringify(opts)
+    let hashref = await this.getMeta(key)
+    if (!hashref) return null
+    let [ hash, ext ] = hashref.split('.')
+    let value = await this.store.get(hash)
+    if (ext === 'json') {
+      return JSON.parse(value.toString())
+    }
+    if (ext === 'str') {
+      return value.toString()
+    }
+    return value
+  }
+  async cache (opts, value) {
+    let key = qs.stringify(opts)
+    let ext = '.buffer'
+    if (typeof value === 'object' && !Buffer.isBuffer(value)) {
+      value = Buffer.from(JSON.stringify(value))
+      ext = '.json'
+    }
+    if (typeof value === 'string') {
+      value = Buffer.from(value)
+      ext = '.str'
+    }
+    if (!Buffer.isBuffer(value)) {
+      throw new Error('Unknown type.')
+    }
+    let hash = await hasher(value)
+    await this.store.set(hash, value)
+    await this.setMeta(key, hash + ext)
+    return hash
+  }
   async setMeta (key, value) {
     // TODO: internal caching
     if (typeof value !== 'string') throw new Error('Invalid meta type.')

@@ -59,7 +59,10 @@
     <script>
       window.IMAGEURL = 'https://upload.wikimedia.org/wikipedia/commons/e/e4/RZA_Shankbone_2009_Tao_of_Wu.jpg'
       window.defer = fn => {
-        window.addEventListener('CompretendReady', fn)
+        window.addEventListener('CompretendReady', () => {
+          Compretend.api = 'http://138.68.3.9:3000'
+          fn()
+        })
       }
     </script>
 

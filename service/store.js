@@ -8,6 +8,7 @@ class MemoryStore {
   }
   async set (key, value) {
     this._store[key] = value
+    return true
   }
   async has (key) {
     return !!(this._store[key])

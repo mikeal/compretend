@@ -8,14 +8,28 @@ const pushImage = async image => {
   return {hash, scaled}
 }
 
-const generateImage = (image, req) => {
+const generateImage = async (image, req, res) => {
   delete req.query.body
-  return image.generate(req.query)
+  let cachedOpts = Object.assign({query: 'generate'}, req.query)
+  let cached = await image.cached(cachedOpts)
+  if (cached) {
+    return cached
+  }
+  let ret = await image.generate(req.query)
+  image.cache(cachedOpts, ret)
+  return ret
 }
 
-const generateBounds = (image, req) => {
+const generateBounds = async (image, req, res) => {
   delete req.query.body
-  return image.bounds(req.query)
+  let cachedOpts = Object.assign({query: 'bounds'}, req.query)
+  let cached = await image.cached(cachedOpts)
+  if (cached) {
+    return cached
+  }
+  let ret = await image.bounds(req.query)
+  image.cache(cachedOpts, ret)
+  return ret
 }
 
 const routes = {
