@@ -12,7 +12,7 @@
     "postcoverage": "codecov",
     "precommit": "npm test",
     "prepush": "npm test",
-    "prepublish": "mkdir -p dist && browserify dist.js > dist/compretend.js && cat dist/compretend.js | minify > dist/compretend.min.js",
+    "prepublishOnly": "mkdir -p dist && browserify dist.js > dist/compretend.js && cat dist/compretend.js | minify > dist/compretend.min.js",
     "commitmsg": "validate-commit-msg",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
     "start": "micro service/api.js",
