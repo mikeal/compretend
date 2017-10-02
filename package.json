@@ -25,7 +25,6 @@
   },
   "keywords": [],
   "author": "Mikeal Rogers <mikeal.rogers@gmail.com> (http://www.mikealrogers.com)",
-  "license": "Apache-2.0",
   "dependencies": {
     "blob-util": "^1.3.0",
     "canvas": "^1.6.7",
