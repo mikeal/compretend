@@ -80,7 +80,7 @@ class ImageAPI {
     let key = qs.stringify(opts)
     let hashref = await this.getMeta(key)
     if (!hashref) return null
-    let [ hash, ext ] = hashref.split('.')
+    let [ hash, ext ] = hashref.toString().split('.')
     let value = await this.store.get(hash)
     if (ext === 'json') {
       return JSON.parse(value.toString())
@@ -123,7 +123,7 @@ class ImageAPI {
     let cached = await this.getMeta(constraint)
     if (cached) {
       let img = new ImageAPI()
-      img.hash = cached
+      img.hash = cached.toString()
       return img
     }
     // TODO: scale image and store it.
