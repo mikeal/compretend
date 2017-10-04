@@ -9,7 +9,7 @@ node_js:
 before_script:
   - npm prune
 install:
-  - npm install --no-build
+  - npm install --ignore-scripts
 script:
   - npm run posttest
 after_success:
