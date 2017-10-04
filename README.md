@@ -12,12 +12,13 @@ This repo contains:
 Include compretend on your web page.
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/compretend@latest/dist/compretend.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/compretend/dist/compretend.min.js"></script>
 ```
 Now you can add compretend elements to your page.
 
 ```html
-<compretend-img src="http://site.com/image.png" crop="faces" />
+<compretend-img src="http://site.com/image.png" crop="faces">
+</compretend-img>
 ```
 
 The above example will place an image on the page centered around the faces detected in the image.

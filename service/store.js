@@ -28,7 +28,7 @@ class FileSystemStore {
     let f = path.join(this.dir, sanitize(key))
     let ret = null
     try {
-      ret = await stat(f)
+      ret = await statFile(f)
     } catch (e) {
       if (e.code !== 'ENOENT') throw e
     }

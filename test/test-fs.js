@@ -9,10 +9,6 @@ const { FileSystemStore } = require('../service/store')
 const { promisify } = require('util')
 const request = require('request-promise')
 
-const Canvas = require('canvas')
-const Image = Canvas.Image
-
-
 const readFile = f => promisify(fs.readFile)(path.join(__dirname, f))
 const ls = promisify(fs.readdir)
 
