@@ -8,6 +8,8 @@ node_js:
   - '8'
 before_script:
   - npm prune
+install:
+  - npm install --no-build
 script:
   - npm run posttest
 after_success:
